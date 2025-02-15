@@ -1,10 +1,13 @@
-﻿namespace TipCalculator
+﻿namespace TipCalculator;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        Routing.RegisterRoute(nameof(CustomTipPage), typeof(CustomTipPage));
+        
+        Application.Current.UserAppTheme = AppTheme.Light;
     }
 }
