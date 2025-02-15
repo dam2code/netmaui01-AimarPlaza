@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 using People.Models;
 
 namespace People;
@@ -7,18 +6,17 @@ namespace People;
 public class PersonRepository
 {
     string _dbPath;
-    private SQLiteAsyncConnection conn;
+    private SQLiteConnection conn;
 
     public string StatusMessage { get; set; }
 
-    private async Task Init()
+    private void Init()
     {
         if (conn != null)
             return;
 
-        conn = new SQLiteAsyncConnection(_dbPath);
-
-        await conn.CreateTableAsync<Person>();
+        conn = new SQLiteConnection(_dbPath);
+        conn.CreateTable<Person>();
     }
 
     public PersonRepository(string dbPath)
@@ -26,17 +24,17 @@ public class PersonRepository
         _dbPath = dbPath;
     }
 
-    public async Task AddNewPerson(string name)
+    public void AddNewPerson(string name)
     {
         int result = 0;
         try
         {
-            await Init();
+            Init();
 
             if (string.IsNullOrEmpty(name))
                 throw new Exception("Valid name required");
 
-            result = await conn.InsertAsync(new Person { Name = name });
+            result = conn.Insert(new Person { Name = name });
 
             StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
         }
@@ -46,12 +44,12 @@ public class PersonRepository
         }
     }
 
-    public async Task<List<Person>> GetAllPeople()
+    public List<Person> GetAllPeople()
     {
         try
         {
-            await Init();
-            return await conn.Table<Person>().ToListAsync();
+            Init();
+            return conn.Table<Person>().ToList();
         }
         catch (Exception ex)
         {
